@@ -9,42 +9,23 @@ import styled from "styled-components";
 type SettingsPropsType = {
     maxValue: string
     startValue: string
-    setMaxValue: (value: string) => void
-    setStartValue: (value: string) => void
     set:()=>void
     isSet:boolean
-    setIsSet:(value:boolean)=>void
+    updateMaxValue:(value:string)=>void
+    updateStartValue:(value:string)=>void
+    errorSet:string
 }
 
 export const Settings = (props: SettingsPropsType) => {
 
-    const [error, setError] = useState<string>("");
+
 
     const onChangeMaxInputHandler = (event: ChangeEvent<HTMLInputElement>) => {
-        props.setIsSet(false);
-
-        if (Number(event.currentTarget.value) < 0) {
-            setError("max value < 0");
-            return;
-        } else if(Number(event.currentTarget.value) < Number(props.startValue)){
-            setError("start value > max value");
-        }else {
-            props.setMaxValue(event.currentTarget.value)
-            setError("");
-        }
+        props.updateMaxValue(event.currentTarget.value)
     }
 
     const onChangeStartInputHandler = (event: ChangeEvent<HTMLInputElement>) => {
-        props.setIsSet(false);
-
-        if (Number(event.currentTarget.value) < 0) {
-            setError("start value < 0");
-        } else if (Number(event.currentTarget.value) > Number(props.maxValue)) {
-            setError("start value > max value");
-        } else {
-            props.setStartValue(event.currentTarget.value)
-            setError("");
-        }
+        props.updateStartValue(event.currentTarget.value)
     }
 
     const onClickSetHandler=()=>props.set();
@@ -52,7 +33,7 @@ export const Settings = (props: SettingsPropsType) => {
     return (
         <S.PrimaryBlock>
             <S.SecondaryBlock height={"80px"}>
-                <S.BlockInput errorColor={error} >
+                <S.BlockInput errorColor={props.errorSet} >
                     <span>max value</span>
                     <input
                         value={props.maxValue}
@@ -60,7 +41,7 @@ export const Settings = (props: SettingsPropsType) => {
                         onChange={onChangeMaxInputHandler}/>
                 </S.BlockInput>
 
-                <S.BlockInput errorColor={error} >
+                <S.BlockInput errorColor={props.errorSet} >
                     <span>start value</span>
                     <input
                         value={props.startValue}
@@ -70,8 +51,8 @@ export const Settings = (props: SettingsPropsType) => {
             </S.SecondaryBlock>
 
             <S.SecondaryBlock height={"40px"}>
-                {error ?
-                    <Error>{error}</Error> :
+                {props.errorSet ?
+                    <Error>{props.errorSet}</Error> :
                     <Button isDisabled={props.isSet} onClick={onClickSetHandler} title={"set"}/>}
             </S.SecondaryBlock>
         </S.PrimaryBlock>
