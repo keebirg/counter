@@ -1,10 +1,8 @@
 import React, {
     ChangeEvent,
-    useState
 } from 'react';
 import {S} from "./Styles";
 import {Button} from "./Button";
-import styled from "styled-components";
 
 type SettingsPropsType = {
     maxValue: string
@@ -28,12 +26,14 @@ export const Settings = (props: SettingsPropsType) => {
         props.updateStartValue(event.currentTarget.value)
     }
 
-    const onClickSetHandler=()=>props.set();
+    const onClickSetHandler=()=> {
+        props.set()
+    };
 
     return (
         <S.PrimaryBlock>
             <S.SecondaryBlock height={"80px"}>
-                <S.BlockInput errorColor={props.errorSet} >
+                <S.BlockInput error={props.errorSet} >
                     <span>max value</span>
                     <input
                         value={props.maxValue}
@@ -41,7 +41,7 @@ export const Settings = (props: SettingsPropsType) => {
                         onChange={onChangeMaxInputHandler}/>
                 </S.BlockInput>
 
-                <S.BlockInput errorColor={props.errorSet} >
+                <S.BlockInput error={props.errorSet} >
                     <span>start value</span>
                     <input
                         value={props.startValue}
@@ -52,7 +52,7 @@ export const Settings = (props: SettingsPropsType) => {
 
             <S.SecondaryBlock height={"40px"}>
                 {props.errorSet ?
-                    <Error>{props.errorSet}</Error> :
+                    <S.Error>{props.errorSet}</S.Error> :
                     <Button isDisabled={props.isSet} onClick={onClickSetHandler} title={"set"}/>}
             </S.SecondaryBlock>
         </S.PrimaryBlock>
@@ -60,7 +60,4 @@ export const Settings = (props: SettingsPropsType) => {
     );
 };
 
-const Error = styled.span`
-  color: red;
-  font-size: 14pt;
-`
+

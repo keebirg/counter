@@ -1,11 +1,11 @@
 import styled from "styled-components";
 
 type ButtonPropsType={
-    errorColor?:string
+    error?:string
 }
 
 const Button = styled.button<ButtonPropsType>`
-  background-color: ${props=> props.errorColor? "red" : "#61dafb"};
+  background-color: ${props=> props.error? "red" : "#61dafb"};
   font: 20pt sans-serif;
   border-radius: 7px;
   cursor: pointer;
@@ -18,6 +18,9 @@ const App = styled.div`
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 15px;
 
   background-color: #282c34;
 `
@@ -43,18 +46,20 @@ type SecondaryBlockPropsType = {
     height?: string
     justify?: string
     direction?: string
+    error?:string
 }
 
 const SecondaryBlock = styled(PrimaryBlock)<SecondaryBlockPropsType>`
   flex-direction: ${props => props.direction || "column"};
   justify-content: ${props => props.justify || "center"};
   height: ${props => props.height || "auto"};
+  color: ${props => props.error? "red": "none" };
   width: 270px;
 `
 
 
 type BlockInputPropsType={
-    errorColor?:string
+    error?:string
 }
 
 const BlockInput = styled.div<BlockInputPropsType>`
@@ -70,10 +75,17 @@ const BlockInput = styled.div<BlockInputPropsType>`
 
   input {
     width: 100px;
-    background-color: ${props=> props.errorColor? "red" : "none"};
+    background-color: ${props=> props.error? "red" : "none"};
+    border-radius: 7px;
+    text-align: center;
+    font-weight: bold;
   }
 `
 
+const Error = styled.span`
+  color: red;
+  font-size: 14pt;
+`
 
 export const S = {
     Button,
@@ -81,4 +93,5 @@ export const S = {
     SecondaryBlock,
     PrimaryBlock,
     BlockInput,
+    Error,
 }

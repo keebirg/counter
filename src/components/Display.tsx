@@ -18,13 +18,13 @@ export const Display = (props: DisplayPropsType) => {
 
     return (
         <S.PrimaryBlock>
-            <S.SecondaryBlock height={"80px"}>
+            <S.SecondaryBlock error={props.errorInc} height={"80px"}>
                 {props.currentValue}
             </S.SecondaryBlock>
 
             <S.SecondaryBlock height={"40px"} direction={"row"} justify={"space-around"}>
                 <Button
-                    errorColor={props.errorInc}
+                    error={props.errorInc}
                     isDisabled={props.isInc}
                     onClick={inc}
                     title={"inc"}/>
