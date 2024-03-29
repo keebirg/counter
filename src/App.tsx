@@ -5,123 +5,80 @@ import React, {
 import {S} from "./components/Styles";
 import {Settings} from "./components/Settings";
 import {Display} from "./components/Display";
+import {useDispatch, useSelector} from "react-redux";
+import {AppRootState} from "./state/store";
+import {counterStateType, incAC, resetAC, setAC, updateMaxValueAC, updateStartValueAC} from "./state/counter-reducer";
 
 function App() {
 
-    const [maxValue, setMaxValue] = useState<string>("0"); //значения поля max value
-    const [startValue, setStartValue] = useState<string>("0");//значения поля start value
-    const [currentValue, setСurrentValue] = useState<string>("click set"); // значение текущего значения
-
-    const [isSet, setIsSet] = useState<boolean>(false);// сстояние кнопке set (активна)
-    const [isInc, setIsInc] = useState<boolean>(true);// сстояние кнопке inc (не активна)
-    const [isReset, setReset] = useState<boolean>(true);// сстояние кнопке inc (не активна)
-
-    const [errorInc, setErrorInc] = useState<string>("");//ошибка настроек
-    const [errorSet, setErrorSet] = useState<string>("");//ошибка вывода
+    const dispatch = useDispatch()
+    const counterPrimaryData = useSelector<AppRootState, counterStateType>(state => state.counter)
 
 
-    const getBackSaveValue = (key: string, setFunction: (value: (any)) => void) => {
-        const tempValue = localStorage.getItem(key)
-        if (tempValue) {
-            setFunction(JSON.parse(tempValue))
-        }
-    }
+    // const getBackSaveValue = (key: string, setFunction: (value: (any)) => void) => {
+    //     const tempValue = localStorage.getItem(key)
+    //     if (tempValue) {
+    //         setFunction(JSON.parse(tempValue))
+    //     }
+    // }
+    //
+    // const setBackSaveValue = (key: string, setFunction: (value: (any)) => void, value: any) => {
+    //     setFunction(value);
+    //     localStorage.setItem(key, JSON.stringify(value));
+    // }
 
-    const setBackSaveValue = (key: string, setFunction: (value: (any)) => void, value: any) => {
-        setFunction(value);
-        localStorage.setItem(key, JSON.stringify(value));
-    }
-
-    useEffect(() => {
-        getBackSaveValue('currentValue', setСurrentValue)
-        getBackSaveValue('maxValue', setMaxValue)
-        getBackSaveValue('startValue', setStartValue)
-
-        getBackSaveValue('isSet', setIsSet)
-        getBackSaveValue('isInc', setIsInc)
-        getBackSaveValue('isReset', setReset)
-
-        getBackSaveValue('errorInc', setErrorInc)
-        getBackSaveValue('errorSet', setErrorSet)
-    }, [])
+    // useEffect(() => {
+    //     getBackSaveValue('currentValue', setСurrentValue)
+    //     getBackSaveValue('maxValue', setMaxValue)
+    //     getBackSaveValue('startValue', setStartValue)
+    //
+    //     getBackSaveValue('isSet', setIsSet)
+    //     getBackSaveValue('isInc', setIsInc)
+    //     getBackSaveValue('isReset', setReset)
+    //
+    //     getBackSaveValue('errorInc', setErrorInc)
+    //     getBackSaveValue('errorSet', setErrorSet)
+    // }, [])
 
 
     const updateMaxValue = (value: string) => {
-        reset();
-
-        if (Number(value) < 0) {
-            setBackSaveValue('errorSet', setErrorSet, "max value < 0")
-            return
-        }
-        if (Number(value) < Number(startValue)) {
-            setBackSaveValue('errorSet', setErrorSet, "start value > max value")
-            return
-        }
-
-        setBackSaveValue('maxValue', setMaxValue, value)
-        setBackSaveValue('errorSet', setErrorSet, "")
+        dispatch(updateMaxValueAC(value))
     }
 
-
     const updateStartValue = (value: string) => {
-
-        reset();
-        if (Number(value) < 0) {
-            setBackSaveValue('errorSet', setErrorSet, "start value < 0")
-            return;
-        }
-        if (Number(value) > Number(maxValue)) {
-            setBackSaveValue('errorSet', setErrorSet, "start value > max value")
-            return;
-        }
-
-        setBackSaveValue('startValue', setStartValue, value)
-        setBackSaveValue('errorSet', setErrorSet, "")
+        dispatch(updateStartValueAC(value))
     }
 
     const set = () => {              // нажали кнопку set
-        setBackSaveValue('isSet', setIsSet, true)
-        setBackSaveValue('currentValue', setСurrentValue, startValue)
-        setBackSaveValue('isInc', setIsInc, false)
-        setBackSaveValue('isReset', setReset, false)
-        setBackSaveValue('errorInc', setErrorInc, "")
+        dispatch(setAC())
     }
 
     const inc = () => {            // нажали кнопку inc
-        if (Number(maxValue) > Number(currentValue)) {
-            setBackSaveValue('currentValue', setСurrentValue, `${Number(currentValue) + 1}`)
-            setBackSaveValue('isSet', setIsSet, false)
-            return;
-        }
-        setBackSaveValue('errorInc', setErrorInc, "fail")
-        setBackSaveValue('isInc', setIsInc, true)
+        dispatch(incAC())
     }
 
     const reset = () => {           // нажали кнопку reset
-        setBackSaveValue('currentValue', setСurrentValue, startValue)
-        setBackSaveValue('isSet', setIsSet, false)
-        setBackSaveValue('errorInc', setErrorInc, "")
-        setBackSaveValue('isInc', setIsInc, false)
+        dispatch(resetAC())
     }
 
     return (
         <S.App>
             <Settings
-                maxValue={maxValue}
-                startValue={startValue}
+                maxValue={counterPrimaryData.value.maxValue}
+                startValue={counterPrimaryData.value.startValue}
                 set={set}
-                isSet={isSet}
+                isSet={counterPrimaryData.flag.isSet}
                 updateMaxValue={updateMaxValue}
                 updateStartValue={updateStartValue}
-                errorSet={errorSet}/>
+                errorSet={counterPrimaryData.error.errorSet}/>
 
             <Display
-                currentValue={currentValue}
-                isInc={isInc}
-                isReset={isReset}
+                currentValue={counterPrimaryData.value.currentValue}
+                isInc={counterPrimaryData.flag.isInc}
+                isReset={counterPrimaryData.flag.isReset}
                 inc={inc}
                 reset={reset}
-                errorInc={errorInc}/>
+                errorInc={counterPrimaryData.error.errorInc}/>
         </S.App>
     );
 }
